@@ -10,7 +10,7 @@
 [![Architecture](https://img.shields.io/badge/Methodology-Spec--Driven%20SDLC-1F2937?style=for-the-badge)](https://www.talosgrid.ai)
 [![Ecosystem](https://img.shields.io/badge/Ecosystem-Open%20%26%20Vendor--Agnostic-10B981?style=for-the-badge)](https://www.talosgrid.ai)
 
-[Why TalosGrid](#-why-talosgrid) • [Business Value](#-enterprise-value--business-impact) • [Methodology](#-beyond-vibe-coding-governed-spec-driven-sdlc) • [Architecture](#-platform-architecture) • [Capabilities](#-core-platform-capabilities) • [Integrations](#-ecosystem--integrations) • [Get Started](#-get-started)
+[Why TalosGrid](#-why-talosgrid) • [Business Value](#-enterprise-value--business-impact) • [Methodology](#-beyond-vibe-coding-governed-spec-driven-sdlc) • [Capabilities](#-core-platform-capabilities) • [Architecture](#-architecture-overview) • [Integrations](#-ecosystem--integrations) • [Get Started](#-get-started)
 
 </div>
 
@@ -56,90 +56,6 @@ TalosGrid replaces fragile, chat-based code generation with a structured **Spec-
 
 ---
 
-## Platform Architecture
-
-TalosGrid sits as an open, vendor-agnostic **Enterprise Control Plane** between your engineering workflows and the underlying AI execution ecosystem—enforcing governance, semantic context, and real-time guardrails on every interaction.
-
-```mermaid
-flowchart TB
-    %% 1. Entry & SDLC Layer
-    subgraph EntryLayer["Multi-Platform DevOps, SDLC & AI Clients"]
-        direction LR
-        DEVOPS["DevOps & SDLC Ecosystem<br/>GitHub & GHE • Gitea / Forgejo<br/>(Roadmap: GitLab, Bitbucket, Jira)<br/>Issue-to-PR • Automated PR Reviews • CI/CD"]
-        CLIENTS["Engineering Teams & AI Assistants<br/>Claude • ChatGPT • Cursor<br/>GitHub Copilot • MCP Clients"]
-    end
-
-    %% 2. TalosGrid Enterprise Control Plane
-    subgraph ControlPlane["TalosGrid — Enterprise AI Control Plane"]
-        direction TB
-
-        subgraph GovLayer["Governance, Security & Policy Layer"]
-            direction LR
-            POLICY["Enterprise Governance & Policy Engine<br/>SSO/SAML • Fine-Grained RBAC<br/>Budget Quotas • Policy Enforcement"]
-            GUARD["Real-Time Guardrails<br/>Safety Rules • PII Redaction<br/>Prompt Injection Defense • Compliance"]
-        end
-
-        subgraph ContextLayer["Knowledge & Approved Capabilities"]
-            direction LR
-            GRAPHRAG["Semantic Project Knowledge & Live Graph RAG<br/>Continuous Codebase & ADR Indexing<br/>Living Semantic Docs • Brownfield Context"]
-            SKILLS["Approved & Safe AI Skills Catalog<br/>Secured • Versioned • Centralized<br/>Reusable Enterprise Agent Skills"]
-        end
-
-        subgraph GatewayLayer["Unified Open Gateways (System-1 Task Routing)"]
-            direction LR
-            LLMGW["LLM Gateway<br/>1,000+ Models • Smart Routing<br/>Fallbacks • Caching • Cost Control"]
-            MCPGW["MCP Gateway<br/>Centralized Auth • Rate Limits<br/>Budgets • Tool-Level Permissions"]
-            AGENTGW["Agent Gateway (A2A)<br/>Agent Registry • Granular Identity<br/>Sandboxing • Execution Tracing"]
-        end
-
-        OBS["Observability, Audit & AI FinOps<br/>Real-Time Telemetry Dashboards • Immutable Audit Logs • Cost Attribution • OpenTelemetry"]
-    end
-
-    %% 3. Execution Ecosystem
-    subgraph ExecLayer["Open Execution Ecosystem (Zero Vendor Lock-In)"]
-        direction LR
-        LLMS["Multi-Provider LLMs<br/>(OpenAI, Anthropic, Gemini,<br/>Open-Weight & Private Models)"]
-        MCPS["Internal & Validated<br/>3rd-Party MCP Servers<br/>(Pre-Authorized Toolboxes)"]
-        A2A["Autonomous A2A<br/>Coding & Engineering Agents"]
-    end
-
-    %% Connections
-    DEVOPS <-->|"Human-in-the-Loop Checkpoints & Webhooks"| POLICY
-    CLIENTS <-->|"Governed Queries & MCP Requests"| POLICY
-    CLIENTS -.->|"Live Semantic Queries"| GRAPHRAG
-
-    POLICY --> GUARD
-    GUARD --> GatewayLayer
-
-    GRAPHRAG <-->|"Persistent Context"| GatewayLayer
-    SKILLS -->|"Vetted Instructions"| AGENTGW
-
-    GatewayLayer --> OBS
-    POLICY -.-> OBS
-    GUARD -.-> OBS
-
-    LLMGW <--> LLMS
-    MCPGW <--> MCPS
-    AGENTGW <--> A2A
-
-    %% Styling (GitHub Light & Dark Mode compatible)
-    classDef entry fill:#1E293B,stroke:#475569,color:#F8FAFC,stroke-width:1.5px;
-    classDef gov fill:#0F4C81,stroke:#38BDF8,color:#FFFFFF,stroke-width:1.5px;
-    classDef ctx fill:#115E59,stroke:#2DD4BF,color:#FFFFFF,stroke-width:1.5px;
-    classDef gw fill:#312E81,stroke:#818CF8,color:#FFFFFF,stroke-width:1.5px;
-    classDef obs fill:#7C2D12,stroke:#FB923C,color:#FFFFFF,stroke-width:1.5px;
-    classDef exec fill:#064E3B,stroke:#34D399,color:#FFFFFF,stroke-width:1.5px;
-
-    class DEVOPS,CLIENTS entry;
-    class POLICY,GUARD gov;
-    class GRAPHRAG,SKILLS ctx;
-    class LLMGW,MCPGW,AGENTGW gw;
-    class OBS obs;
-    class LLMS,MCPS,A2A exec;
-```
-
----
-
 ## Core Platform Capabilities
 
 Every capability in TalosGrid is engineered to be **open, modular, and vendor-agnostic**:
@@ -157,6 +73,50 @@ Every capability in TalosGrid is engineered to be **open, modular, and vendor-ag
 ### Knowledge & Observability
 * **Semantic Project Knowledge & Live Graph RAG:** Continuously index codebases, architecture decisions, and project documentation into a living semantic Knowledge Graph—always up to date and queryable by human engineers and AI assistants (Claude, ChatGPT, Cursor, Copilot, and MCP clients).
 * **Observability & Telemetry:** Built-in real-time telemetry dashboards, immutable audit logs, granular cost attribution, and native **OpenTelemetry** support out of the box.
+
+---
+
+## Architecture Overview
+
+```mermaid
+flowchart TB
+    subgraph Users["Engineering Teams & DevOps Workflows"]
+        DEV["Engineers & IDEs<br/>(Cursor, Copilot, Claude, ChatGPT)"]
+        REPO["DevOps & CI/CD<br/>(GitHub, GHE, Gitea/Forgejo)"]
+    end
+
+    subgraph ControlPlane["TalosGrid Enterprise Control Plane"]
+        GOV["Governance & Policy Engine<br/>(SSO/SAML, RBAC, Quotas, Audit)"]
+        GUARD["Real-Time Guardrails<br/>(PII Redaction, Prompt Defense, Compliance)"]
+        KG["Semantic Knowledge Graph & Live Graph RAG"]
+        SKILLS["Approved AI Skills Catalog"]
+        OBS["Observability & FinOps<br/>(OpenTelemetry, Telemetry, Cost Attribution)"]
+
+        subgraph Gateways["Unified Open Gateways"]
+            LLMGW["LLM Gateway<br/>(1,000+ Models, Routing, Caching)"]
+            MCPGW["MCP Gateway<br/>(Auth, Tool Permissions, Rate Limits)"]
+            AGWGW["Agent Gateway<br/>(A2A Identity, Sandboxing, Tracing)"]
+        end
+    end
+
+    subgraph Ecosystem["Execution Ecosystem"]
+        LLMS["Multi-Provider LLMs"]
+        MCPS["Internal & 3rd-Party MCP Servers"]
+        AGENTS["Autonomous A2A Coding Agents"]
+    end
+
+    DEV --> GOV
+    REPO --> GOV
+    GOV --> GUARD
+    GUARD --> Gateways
+    KG <--> Gateways
+    SKILLS --> AGWGW
+    Gateways --> OBS
+
+    LLMGW --> LLMS
+    MCPGW --> MCPS
+    AGWGW --> AGENTS
+```
 
 ---
 
